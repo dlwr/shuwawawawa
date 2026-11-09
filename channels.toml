@@ -1,1 +1,391 @@
-channel = []
+[[channel]]
+id = "UCsCT8r_NVQGTo5ed4blUY-g"
+name = "砂田アトム"
+content = ["語り", "エンタメ"]
+sign = ""
+signer = ""
+note = "砂田アトム公式。手話コラム・語り https://www.deaf-atom.com/"
+
+[[channel]]
+id = "UCm3FGj_PBirotGmSxpL5yLw"
+name = "Yutaka Kudou"
+content = ["学習", "語り"]
+sign = ""
+signer = "聴覚障害者"
+note = "宮城のフリー手話講師。手話講座・語り・対談"
+
+[[channel]]
+id = "UC8JLpYMZdn1FZuIUCY0VNEw"
+name = "荒木宏彦"
+content = ["語り", "Vlog"]
+sign = ""
+signer = "ろうあ者"
+note = "長崎。手話中心の情報発信・日常"
+
+[[channel]]
+id = "UC4IDr6L3mQPxSRTO9zjCa0w"
+name = "ﾔﾏ ﾖｼ"
+content = ["語り"]
+sign = ""
+signer = ""
+note = "神戸の吉山さん。字幕なし手話語り（note.com/menomado で紹介）"
+
+[[channel]]
+id = "UCzib_y24AvzNSd0NI8duQEQ"
+name = "カサケンの手話ちゃんねる"
+content = ["学習", "語り"]
+sign = ""
+signer = "聴覚障がい者"
+note = "関西の手話cafe運営。30秒手話ストーリーなど"
+
+[[channel]]
+id = "UClBuDirX1AzLaIoNkCi4nFw"
+name = "showゆっくりDeafちゃんねる"
+content = ["語り", "学習"]
+sign = ""
+signer = "ろう者"
+note = "生まれつき聞こえないshowさん。手話解説・ろう者の話"
+
+[[channel]]
+id = "UCngiNhuYXV2ovZe04KhdARQ"
+name = "友遊　ろう者の吉原登"
+content = ["Vlog", "語り"]
+sign = ""
+signer = "ろう者"
+note = "新潟の魅力紹介・ろう者あるある"
+
+[[channel]]
+id = "UC4YIkyipvSWH51CYnKgvHbg"
+name = "ゆりん"
+content = ["Vlog", "エンタメ"]
+sign = ""
+signer = "聞こえない（手話が第一言語と公表）"
+note = "登録7万超。日常・ショート"
+
+[[channel]]
+id = "UC2bV3HZNHoMm-K8gOKRDOng"
+name = "みゆみゆチャンネル"
+content = ["Vlog"]
+sign = ""
+signer = "父が生まれつき聞こえない（公表）"
+note = "聞こえない父と手話が少しできる娘の暮らし。登録17万"
+
+[[channel]]
+id = "UCtdBnrs5sE7RqZ6kL8INeaw"
+name = "POCチャンネル"
+content = ["Vlog", "エンタメ"]
+sign = ""
+signer = "次男・三男が聞こえない、長男は聞こえる（公表）"
+note = "三兄弟の手話・聴覚障害あるある"
+
+[[channel]]
+id = "UCDyAjdpn2w3XwFOuotlaPgA"
+name = "デフ・ビーンチャンネル"
+content = ["エンタメ", "語り"]
+sign = ""
+signer = "ろう者"
+note = "喜劇・パフォーマンス系"
+
+[[channel]]
+id = "UCXQJfUNsBZtyRQXfQgW3Tuw"
+name = "デフ姉妹ちゃんねる"
+content = ["Vlog"]
+sign = ""
+signer = "聞こえない姉妹（公表）"
+note = "手話と口話で会話する姉妹の日常"
+
+[[channel]]
+id = "UCB_y7A_uopMIq_1U8g8KwRw"
+name = "DeafLand聾発信"
+content = ["語り", "エンタメ"]
+sign = ""
+signer = "ろう者（デフファミリー、聾映像制作者と公表）"
+note = "千々岩恵子さんの発信"
+
+[[channel]]
+id = "UCVLtheSFSphhqsKe0Jsv_OQ"
+name = "ゆきまさ手話チャンネル"
+content = ["語り", "学習"]
+sign = "日本手話"
+signer = "ろう者（デフファミリー・ネイティブサイナーと公表）"
+note = "デフサッカー元日本代表。日本手話で手話べり"
+
+[[channel]]
+id = "UCWc8UKGJqZLyP_AiZO7ITcg"
+name = "聾・ゆうりさ夫婦"
+content = ["Vlog"]
+sign = ""
+signer = "ろう者（夫婦）"
+note = "ろう夫婦の日常。登録少なめ"
+
+[[channel]]
+id = "UCcWWtFrjg24u3Uzb6qEmhqw"
+name = "みゃおのおと。"
+content = ["Vlog", "エンタメ"]
+sign = ""
+signer = "Deaf（概要に記載）"
+note = "フルテロップの趣味系動画"
+
+[[channel]]
+id = "UCGGcO_a0r5ELt7PtKgprlBQ"
+name = "sumie Kobayashi"
+content = ["語り"]
+sign = ""
+signer = ""
+note = "小林澄枝さんの手話チャンネル。sumievlog 2800回超"
+
+[[channel]]
+id = "UCnxrIIWYKbP5gSWpt494INA"
+name = "【聴覚障がい】あっ!CHANねる"
+content = ["学習", "語り"]
+sign = ""
+signer = "聴覚障がい（明石市議 やねたに敦子さん）"
+note = "手話講座・明石の紹介"
+
+[[channel]]
+id = "UCrlmIlFPYyxaonTFhxh-yMw"
+name = "藤乃"
+content = ["学習", "エンタメ"]
+sign = ""
+signer = ""
+note = "日本手話文化協会代表・DeafLinks。手話を楽しむ動画"
+
+[[channel]]
+id = "UCtp9E5IVlT9X5FeD3tvg7Vw"
+name = "ゲイと手話とかえでと"
+content = ["学習", "語り"]
+sign = "日本手話"
+signer = ""
+note = "日本手話指導歴19年・Tokyo Deaf LGBTQ bond代表。日本手話の文法解説"
+
+[[channel]]
+id = "UCoH5zoVjQ2N2D7lEFY5q2WQ"
+name = "タイレンちゃんねる"
+content = ["学習", "Vlog"]
+sign = ""
+signer = "難聴（双子と姉、管理は母）"
+note = "手話講座・聴覚障害の理解"
+
+[[channel]]
+id = "UCxw70AEdB-rsYu3KzGnG-_w"
+name = "GEROtube TV"
+content = ["語り", "ニュース"]
+sign = ""
+signer = ""
+note = "目黒の手話系番組。伊藤政雄さんゲスト回など"
+
+[[channel]]
+id = "UC2Pa5owvfXkX36AVc-81X5A"
+name = "今村彩子"
+content = ["語り", "Vlog"]
+sign = ""
+signer = ""
+note = "ドキュメンタリー映画監督。dormant"
+
+[[channel]]
+id = "UCWObNCuqpB_ff3LAmDSwE7Q"
+name = "【ろう者】KAZUKIチャンネル"
+content = ["エンタメ"]
+sign = ""
+signer = "ろう者"
+note = "サインパフォーマー。dormant"
+
+[[channel]]
+id = "UCFFp_-zrdHeuBbXQXdb6iOw"
+name = "デフブラインドともこDeafblind Tomoko"
+content = ["語り", "Vlog"]
+sign = ""
+signer = "弱視ろう者（公表）"
+note = "盲ろうの日常。dormant"
+
+[[channel]]
+id = "UCKQDgu61E_y-GhWglXcOkvw"
+name = "めちゅーぶ『目で聞くTV』"
+content = ["語り", "エンタメ"]
+sign = "日本手話"
+signer = "日本手話ネイティブサイナー（公表）"
+note = "現役大学生が本音を語る。dormant"
+
+[[channel]]
+id = "UC7x15Xye81u2PIJGMvC69fg"
+name = "手話フレンズYouTube"
+content = ["学習", "語り"]
+sign = "日本手話"
+signer = "ろう者（代表モンキー高野）"
+note = "手話教室。ろう者＆聴者手話ズレ等"
+
+[[channel]]
+id = "UCcTlpqCFCytce1odPBmqivQ"
+name = "wp手話寺子屋"
+content = ["学習"]
+sign = "日本手話"
+signer = "ネイティブサイナー講師（公表）"
+note = "ろう者が聴者に教える手話教室"
+
+[[channel]]
+id = "UCq_wXWt9kgr6L_T3oFG0vOg"
+name = "NPO法人しゅわえもん"
+content = ["ニュース", "学習"]
+sign = ""
+signer = ""
+note = "子ども向けしゅわえもんニュース。那須映里さん出演回あり https://www.shuwaemon.org"
+
+[[channel]]
+id = "UCZ1YfpOkbCAdOuH0tkn2awg"
+name = "男組"
+content = ["エンタメ"]
+sign = ""
+signer = ""
+note = "砂田アトムらの手話演劇集団（コメディ）"
+
+[[channel]]
+id = "UCcFM4Busr7T_3bh_lcL33Mw"
+name = "聾世紀"
+content = ["語り"]
+sign = ""
+signer = ""
+note = "ろう者の過去の活動映像アーカイブ（米内山明宏・伊藤政雄など）"
+
+[[channel]]
+id = "UCYFvO0tgemusHyyv49u725w"
+name = "JSL Bible"
+content = ["語り"]
+sign = "日本手話"
+signer = "ろう者主導の団体"
+note = "聖書の日本手話訳"
+
+[[channel]]
+id = "UClEFpfmxKtfBnIvRuX1pG4A"
+name = "日本手話ちゃんねる"
+content = ["学習", "語り"]
+sign = "日本手話"
+signer = "ろう児・卒業生ほか"
+note = "明晴学園（私立ろう学校）公式"
+
+[[channel]]
+id = "UCGIC7Wr_8hlEG6iULlV5UJQ"
+name = "日本手話の文化を辿る旅Journey of Exploring the Culture of JSL"
+content = ["語り"]
+sign = "日本手話"
+signer = ""
+note = "JSL story（戦争体験・昔の手話など）日英字幕"
+
+[[channel]]
+id = "UCEL-kFxU_6EnoEB4sj4DBTg"
+name = "全日本ろうあ連盟"
+content = ["ニュース"]
+sign = ""
+signer = "ろう者の当事者団体"
+note = "連盟の公式発信"
+
+[[channel]]
+id = "UCcbp1VvcYLVcIwB1mFcmwGQ"
+name = "ろう塾"
+content = ["学習"]
+sign = ""
+signer = "ろう者・難聴者の講師育成団体"
+note = "dormant https://roujyuku.com/"
+
+[[channel]]
+id = "UCCkAfmCTGkgJi3QlB_6vkqw"
+name = "HANAIプロダクション"
+content = ["ニュース", "エンタメ"]
+sign = ""
+signer = ""
+note = "手話でニュース・エンタメ配信"
+
+[[channel]]
+id = "UCFMAxYLcZ_Msx3y8YWYuiUA"
+name = "こだYouTube手話サークル"
+content = ["学習"]
+sign = ""
+signer = "聴者（難聴児の親と公表）"
+note = "聴者の手話講座。登録11万"
+
+[[channel]]
+id = "UCZQ5uE2agfHuDnWgY9HLc2g"
+name = "しゅわしゅわ。"
+content = ["学習"]
+sign = ""
+signer = ""
+note = "手話検定・通訳試験向け講座。発信者属性は未確認"
+
+[[channel]]
+id = "UChJDlYOshSkCwZwMDjursmQ"
+name = "手話あいらんどTV"
+content = ["学習", "語り"]
+sign = ""
+signer = ""
+note = "手話教室「手話あいらんど」公式。手話トーク https://www.shuwa-island.jp/"
+
+[[channel]]
+id = "UCHjFBYE-Jyjk_p-HoP2rf1g"
+name = "手話♡ぽよみ"
+content = ["学習"]
+sign = "日本手話"
+signer = "片耳難聴（公表）"
+note = "単語・短文ショート、日英字幕"
+
+[[channel]]
+id = "UCa7ehXHF2q06M0vNlB8R9PQ"
+name = "もとみちの手話チャンネル -mokkun-"
+content = ["学習"]
+sign = ""
+signer = ""
+note = "手話入門・指文字。登録3万超"
+
+[[channel]]
+id = "UC_qRp-Rp4684_toHxeZF7qg"
+name = "すりくろ【高知コーダ3兄弟】"
+content = ["Vlog", "エンタメ"]
+sign = ""
+signer = "コーダ（聞こえる子）"
+note = "高知のコーダ姉弟"
+
+[[channel]]
+id = "UCrBP3Ei-698UVwV_bCLz5gA"
+name = "大屋あゆみと手話仲間チャンネル"
+content = ["エンタメ"]
+sign = ""
+signer = "コーダ（よしもと沖縄の芸人）"
+note = "手話コメディ集団 劇団アラマンダ"
+
+[[channel]]
+id = "UChbPvvJ-d3WZtzIejfjrMGw"
+name = "認定NPO法人障害者放送通信機構「目で聴くテレビ」"
+content = ["ニュース"]
+sign = ""
+signer = ""
+note = "聴覚障害者向け放送局（公的系）"
+
+[[channel]]
+id = "UC4uCHxzx49TGuQhjk5w30pA"
+name = "神奈川県聴覚障害者福祉センター"
+content = ["ニュース", "語り"]
+sign = ""
+signer = ""
+note = "センター長が手話で生活情報（公的系）"
+
+[[channel]]
+id = "UC7d_mjYW41cErGbffMtO_gQ"
+name = "mimisuppomiyagi"
+content = ["ニュース", "学習"]
+sign = ""
+signer = ""
+note = "宮城県聴覚障害者情報センター。字幕・読み取り通訳つき（公的系）"
+
+[[channel]]
+id = "UCaHpmqlbEtpKQSwyUnE9PkA"
+name = "岡山県聴覚障害者センター手話動画配信"
+content = ["語り"]
+sign = ""
+signer = ""
+note = "直太朗の手話語り など（公的系）"
+
+[[channel]]
+id = "UC-GDukA9zR8l0HhffChog7A"
+name = "朝霞社協 公式チャンネル"
+content = ["語り"]
+sign = ""
+signer = ""
+note = "ろう者数人の手話語り（社協・公的系）"

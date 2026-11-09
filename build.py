@@ -57,7 +57,7 @@ def tag_spans(ch):
 
 def render(channels, videos):
     by_id = {c["id"]: c for c in channels}
-    filters = sorted({t for c in channels for t in tags(c) if t})
+    filters = sorted({t for c in channels for t in [*c.get("content", []), c.get("sign", "")] if t})
     rows = []
     for v in videos:
         ch = by_id.get(v["channel_id"], {"name": "", "id": v["channel_id"]})

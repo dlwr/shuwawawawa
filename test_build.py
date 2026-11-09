@@ -86,6 +86,12 @@ class RenderTest(unittest.TestCase):
     def test_shows_signer_when_published(self):
         self.assertIn("ろう者", self.html())
 
+    def test_signer_is_not_a_filter(self):
+        self.assertNotIn('aria-pressed="false">ろう者<', self.html())
+
+    def test_content_is_a_filter(self):
+        self.assertIn('aria-pressed="false">学習<', self.html())
+
 
 if __name__ == "__main__":
     unittest.main()
