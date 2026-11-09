@@ -48,6 +48,11 @@ class CollectTest(unittest.TestCase):
         result = build.collect([{"id": c} for c in feeds], feeds.get)
         self.assertEqual([v["id"] for v in result], ["a", "b", "c", "d", "e"])
 
+    def test_keeps_only_latest_videos_per_channel(self):
+        feed = [video(f"v{i}", f"2026-10-{20 - i:02d}") for i in range(8)]
+        result = build.collect([{"id": "UC1"}], lambda cid: feed)
+        self.assertEqual([v["id"] for v in result], ["v0", "v1", "v2", "v3", "v4"])
+
     def test_skips_channel_whose_fetch_fails(self):
         def fetch(cid):
             if cid == "UC2":

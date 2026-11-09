@@ -9,6 +9,7 @@ from pathlib import Path
 NS = {"a": "http://www.w3.org/2005/Atom", "yt": "http://www.youtube.com/xml/schemas/2015"}
 FEED_URL = "https://www.youtube.com/feeds/videos.xml?channel_id={}"
 JST = timezone(timedelta(hours=9))
+PER_CHANNEL = 5
 
 
 def parse_feed(xml):
@@ -34,7 +35,7 @@ def collect(channels, fetch):
     videos, failures = [], 0
     for ch in channels:
         try:
-            videos += fetch(ch["id"])
+            videos += sorted(fetch(ch["id"]), key=lambda v: v["published"], reverse=True)[:PER_CHANNEL]
         except Exception as e:
             failures += 1
             print(f"skip {ch['id']}: {e}", file=sys.stderr)
