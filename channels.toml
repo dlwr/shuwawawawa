@@ -389,3 +389,19 @@ content = ["語り"]
 sign = ""
 signer = ""
 note = "ろう者数人の手話語り（社協・公的系）"
+
+[[channel]]
+id = "UCeYbDkuL9AbMMwSY75Cv0Sg"
+name = "松谷琢也"
+content = ["学習", "Vlog"]
+sign = ""
+signer = ""
+note = "手話動画「デフたく」シリーズ。旅行や愛犬の話も"
+
+[[channel]]
+id = "UCjv6NgoFzfEHW0ETidWzysQ"
+name = "なつみみ"
+content = ["語り", "Vlog"]
+sign = ""
+signer = ""
+note = "聞こえない立場から手話と表情で日常や考えを語る"
