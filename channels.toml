@@ -159,14 +159,6 @@ signer = ""
 note = "日本手話指導歴19年・Tokyo Deaf LGBTQ bond代表。日本手話の文法解説"
 
 [[channel]]
-id = "UChitc-o2VfWz5cgT-rMRIjQ"
-name = "難聴ユカコの挑戦　(デフサポちゃんねる)"
-content = ["Vlog", "語り"]
-sign = ""
-signer = "難聴者（生まれつき）"
-note = "デフサポ代表。手話主体かは未確認"
-
-[[channel]]
 id = "UCoH5zoVjQ2N2D7lEFY5q2WQ"
 name = "タイレンちゃんねる"
 content = ["学習", "Vlog"]
