@@ -1,0 +1,91 @@
+import unittest
+
+import build
+
+FEED = """<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+ <title>テストch</title>
+ <entry>
+  <yt:videoId>aaa</yt:videoId>
+  <yt:channelId>UC1</yt:channelId>
+  <title>手話で&lt;自己紹介&gt;</title>
+  <published>2026-11-01T00:00:00+00:00</published>
+ </entry>
+ <entry>
+  <yt:videoId>bbb</yt:videoId>
+  <yt:channelId>UC1</yt:channelId>
+  <title>二本目</title>
+  <published>2026-10-01T00:00:00+00:00</published>
+ </entry>
+</feed>"""
+
+
+def video(vid, published, channel_id="UC1"):
+    return {"id": vid, "title": vid, "published": published, "channel_id": channel_id}
+
+
+class ParseFeedTest(unittest.TestCase):
+    def test_returns_every_entry(self):
+        self.assertEqual([v["id"] for v in build.parse_feed(FEED)], ["aaa", "bbb"])
+
+    def test_reads_title(self):
+        self.assertEqual(build.parse_feed(FEED)[0]["title"], "手話で<自己紹介>")
+
+    def test_reads_published(self):
+        self.assertEqual(build.parse_feed(FEED)[0]["published"], "2026-11-01T00:00:00+00:00")
+
+    def test_reads_channel_id(self):
+        self.assertEqual(build.parse_feed(FEED)[0]["channel_id"], "UC1")
+
+
+class CollectTest(unittest.TestCase):
+    def test_sorts_newest_first_across_channels(self):
+        feeds = {
+            "UC1": [video("b", "2026-10-02"), video("e", "2026-09-01")],
+            "UC2": [video("a", "2026-11-01", "UC2"), video("d", "2026-09-15", "UC2")],
+            "UC3": [video("c", "2026-10-01", "UC3")],
+        }
+        result = build.collect([{"id": c} for c in feeds], feeds.get)
+        self.assertEqual([v["id"] for v in result], ["a", "b", "c", "d", "e"])
+
+    def test_skips_channel_whose_fetch_fails(self):
+        def fetch(cid):
+            if cid == "UC2":
+                raise OSError("404")
+            return [video("ok", "2026-11-01", cid)]
+
+        result = build.collect([{"id": "UC1"}, {"id": "UC2"}], fetch)
+        self.assertEqual([v["id"] for v in result], ["ok"])
+
+    def test_raises_when_every_fetch_fails(self):
+        def fetch(cid):
+            raise OSError("down")
+
+        with self.assertRaises(RuntimeError):
+            build.collect([{"id": "UC1"}], fetch)
+
+
+class RenderTest(unittest.TestCase):
+    channels = [{"id": "UC1", "name": "テストch", "content": ["学習"], "sign": "日本手話", "signer": "ろう者", "note": "<b>"}]
+
+    def html(self):
+        return build.render(self.channels, [{"id": "aaa", "title": "<script>", "published": "2026-11-01T00:00:00+00:00", "channel_id": "UC1"}])
+
+    def test_escapes_video_title(self):
+        self.assertIn("&lt;script&gt;", self.html())
+
+    def test_escapes_channel_note(self):
+        self.assertNotIn("<b>", self.html())
+
+    def test_links_video_to_youtube(self):
+        self.assertIn("https://www.youtube.com/watch?v=aaa", self.html())
+
+    def test_shows_channel_name_on_video(self):
+        self.assertIn("テストch", self.html())
+
+    def test_shows_signer_when_published(self):
+        self.assertIn("ろう者", self.html())
+
+
+if __name__ == "__main__":
+    unittest.main()
