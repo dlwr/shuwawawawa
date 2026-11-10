@@ -1,3 +1,4 @@
+import os
 import sys
 import tomllib
 import urllib.request
@@ -31,17 +32,27 @@ def fetch_feed(channel_id):
         return parse_feed(res.read())
 
 
-def collect(channels, fetch):
+def collect(channels, fetch, failed=None):
     videos, failures = [], 0
     for ch in channels:
         try:
             videos += sorted(fetch(ch["id"]), key=lambda v: v["published"], reverse=True)[:PER_CHANNEL]
         except Exception as e:
             failures += 1
+            if failed is not None:
+                failed.append((ch, str(e)))
             print(f"skip {ch['id']}: {e}", file=sys.stderr)
     if channels and failures == len(channels):
         raise RuntimeError("every feed failed")
     return sorted(videos, key=lambda v: v["published"], reverse=True)
+
+
+def failure_report(failed):
+    if not failed:
+        return ""
+    lines = ["## 取得に失敗したチャンネル", "", "404 が続く場合は削除・非公開の可能性があります。", ""]
+    lines += [f"- {c.get('name', '')} ({c['id']}): {err}" for c, err in failed]
+    return "\n".join(lines) + "\n"
 
 
 def jst_date(published):
@@ -86,7 +97,16 @@ TEMPLATE = (Path(__file__).parent / "template.html").read_text()
 
 def main():
     channels = tomllib.loads(Path("channels.toml").read_text())["channel"]
-    videos = collect(channels, fetch_feed)
+    failed = []
+    videos = collect(channels, fetch_feed, failed)
+    report = failure_report(failed)
+    if report:
+        print(report)
+        summary = os.environ.get("GITHUB_STEP_SUMMARY")
+        if summary:
+            with open(summary, "a") as f:
+                f.write(report)
+        print(f"::warning::{len(failed)} 件のチャンネルでフィード取得に失敗しました")
     out = Path("dist")
     out.mkdir(exist_ok=True)
     (out / "index.html").write_text(render(channels, videos))
