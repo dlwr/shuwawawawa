@@ -70,6 +70,27 @@ class CollectTest(unittest.TestCase):
             build.collect([{"id": "UC1"}], fetch)
 
 
+class FailureReportTest(unittest.TestCase):
+    def test_collect_records_failed_channels(self):
+        def fetch(cid):
+            if cid == "UC2":
+                raise OSError("HTTP Error 404: Not Found")
+            return [video("ok", "2026-11-01", cid)]
+
+        failed = []
+        build.collect([{"id": "UC1", "name": "一"}, {"id": "UC2", "name": "二"}], fetch, failed)
+        self.assertEqual(failed, [({"id": "UC2", "name": "二"}, "HTTP Error 404: Not Found")])
+
+    def test_report_is_empty_without_failures(self):
+        self.assertEqual(build.failure_report([]), "")
+
+    def test_report_lists_each_failed_channel(self):
+        report = build.failure_report([({"id": "UC2", "name": "二"}, "HTTP Error 404")])
+        self.assertIn("二", report)
+        self.assertIn("UC2", report)
+        self.assertIn("404", report)
+
+
 class RenderTest(unittest.TestCase):
     channels = [{"id": "UC1", "name": "テストch", "content": ["学習"], "sign": "日本手話", "signer": "ろう者", "note": "<b>"}]
 
