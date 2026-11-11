@@ -405,3 +405,19 @@ content = ["語り", "Vlog"]
 sign = ""
 signer = ""
 note = "聞こえない立場から手話と表情で日常や考えを語る"
+
+[[channel]]
+id = "UC2GuT_ydWDf14wHF9m2o3QQ"
+name = "手話べりチャンネル"
+content = ["語り", "Vlog"]
+sign = ""
+signer = ""
+note = "ろう者と手話べり対談。東京拠点、週2回配信"
+
+[[channel]]
+id = "UC8qxD42NFVtC3A6MQ36LmbA"
+name = "高橋淨"
+content = ["Vlog", "語り"]
+sign = "日本手話"
+signer = "ろう者"
+note = "北海道のジョー・ヒゲさん。旅・ろう者の歴史・グルメ"
