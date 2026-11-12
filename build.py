@@ -87,26 +87,35 @@ def tag_spans(ch):
 def render(channels, videos):
     by_id = {c["id"]: c for c in channels}
     filters = sorted({t for c in channels for t in [*c.get("content", []), c.get("sign", "")] if t})
-    rows = []
+    rows = {False: [], True: []}
     for v in videos:
         ch = by_id.get(v["channel_id"], {"name": "", "id": v["channel_id"]})
         vid = escape(v["id"])
-        rows.append(
+        short = bool(v.get("short"))
+        # 縦長の正式サムネイル oar2.jpg は無い動画があるので、必ずある冒頭フレームを使う
+        rows[short].append(
             f'<li class="video" data-tags="{escape(" ".join(tags(ch)))}">'
             f'<button class="thumb" data-id="{vid}" aria-label="{escape(v["title"])} を再生">'
-            f'<img src="https://i.ytimg.com/vi/{vid}/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"></button>'
-            f'<div class="meta"><a class="title" href="https://www.youtube.com/watch?v={vid}">{escape(v["title"])}</a>'
+            f'<img src="https://i.ytimg.com/vi/{vid}/{"frame0" if short else "mqdefault"}.jpg" alt="" loading="lazy"></button>'
+            f'<a class="title" href="https://www.youtube.com/{"shorts/" if short else "watch?v="}{vid}">{escape(v["title"])}</a>'
             f'<p class="sub"><a href="https://www.youtube.com/channel/{escape(ch["id"])}">{escape(ch["name"])}</a>'
-            f' · <time>{jst_date(v["published"])}</time></p></div></li>'
+            f' · <time>{jst_date(v["published"])}</time></p></li>'
         )
     chan_rows = "".join(
-        f'<li><a href="https://www.youtube.com/channel/{escape(c["id"])}">{escape(c["name"])}</a>'
+        f'<li data-tags="{escape(" ".join(tags(c)))}"><a href="https://www.youtube.com/channel/{escape(c["id"])}">{escape(c["name"])}</a>'
         f'{tag_spans(c)}<p>{escape(c.get("note", ""))}</p></li>'
         for c in sorted(channels, key=lambda c: c["name"])
     )
     buttons = "".join(f'<button class="filter" aria-pressed="false">{escape(t)}</button>' for t in filters)
     updated = datetime.now(JST).strftime("%Y-%m-%d %H:%M")
-    return TEMPLATE.format(buttons=buttons, rows="".join(rows), channels=chan_rows, count=len(channels), updated=updated)
+    return TEMPLATE.format(
+        buttons=buttons,
+        videos="".join(rows[False]),
+        shorts="".join(rows[True]),
+        channels=chan_rows,
+        count=len(channels),
+        updated=updated,
+    )
 
 
 TEMPLATE = (Path(__file__).parent / "template.html").read_text()

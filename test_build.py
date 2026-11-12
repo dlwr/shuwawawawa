@@ -178,7 +178,31 @@ class RenderTest(unittest.TestCase):
     channels = [{"id": "UC1", "name": "テストch", "content": ["学習"], "sign": "日本手話", "signer": "ろう者", "note": "<b>"}]
 
     def html(self):
-        return build.render(self.channels, [{"id": "aaa", "title": "<script>", "published": "2026-11-01T00:00:00+00:00", "channel_id": "UC1"}])
+        return build.render(
+            self.channels,
+            [
+                {"id": "aaa", "title": "<script>", "published": "2026-11-01T00:00:00+00:00", "channel_id": "UC1"},
+                {"id": "sss", "title": "短い", "published": "2026-11-02T00:00:00+00:00", "channel_id": "UC1", "short": True},
+            ],
+        )
+
+    def list_of(self, name):
+        return self.html().split(f'<ul data-view="{name}"')[1].split("</ul>")[0]
+
+    def test_lists_short_under_shorts(self):
+        self.assertIn('data-id="sss"', self.list_of("shorts"))
+
+    def test_leaves_short_out_of_videos(self):
+        self.assertNotIn('data-id="sss"', self.list_of("videos"))
+
+    def test_lists_video_without_short_flag_under_videos(self):
+        self.assertIn('data-id="aaa"', self.list_of("videos"))
+
+    def test_links_short_to_youtube_shorts(self):
+        self.assertIn("https://www.youtube.com/shorts/sss", self.html())
+
+    def test_channel_carries_tags_for_filtering(self):
+        self.assertIn('data-tags="学習 日本手話 ろう者"', self.list_of("channels"))
 
     def test_escapes_video_title(self):
         self.assertIn("&lt;script&gt;", self.html())
