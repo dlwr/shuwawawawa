@@ -65,10 +65,10 @@ def collect(channels, fetch, previous=(), tolerate_outage=False):
             failures += 1
             videos += [v for v in previous if v["channel_id"] == ch["id"]]
             print(f"skip {ch['id']}: {e}", file=sys.stderr)
-    if channels and failures == len(channels):
+    if failures and (failures == len(channels) or not previous and failures * 2 > len(channels)):
         if not tolerate_outage:
-            raise RuntimeError("every feed failed")
-        print("::warning::every feed failed")
+            raise RuntimeError(f"{failures} of {len(channels)} feeds failed")
+        print(f"::warning::{failures} of {len(channels)} feeds failed")
     return sorted(videos, key=lambda v: v["published"], reverse=True)
 
 
