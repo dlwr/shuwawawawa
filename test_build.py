@@ -69,6 +69,12 @@ class CollectTest(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             build.collect([{"id": "UC1"}], fetch)
 
+    def test_returns_nothing_instead_of_raising_when_outage_is_tolerated(self):
+        def fetch(cid):
+            raise OSError("down")
+
+        self.assertEqual(build.collect([{"id": "UC1"}], fetch, tolerate_outage=True), [])
+
 
 class RenderTest(unittest.TestCase):
     channels = [{"id": "UC1", "name": "テストch", "content": ["学習"], "sign": "日本手話", "signer": "ろう者", "note": "<b>"}]
