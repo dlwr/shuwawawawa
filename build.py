@@ -99,7 +99,8 @@ def render(channels, videos):
             f'<img src="https://i.ytimg.com/vi/{vid}/{"frame0" if short else "mqdefault"}.jpg" alt="" loading="lazy"></button>'
             f'<a class="title" href="https://www.youtube.com/{"shorts/" if short else "watch?v="}{vid}">{escape(v["title"])}</a>'
             f'<p class="sub"><a href="https://www.youtube.com/channel/{escape(ch["id"])}">{escape(ch["name"])}</a>'
-            f' · <time>{jst_date(v["published"])}</time></p></li>'
+            f' · <time>{jst_date(v["published"])}</time></p>'
+            f'<label class="seen"><input type="checkbox" class="watched" value="{vid}" aria-label="{escape(v["title"])} を視聴済みにする"> 視聴済み</label></li>'
         )
     chan_rows = "".join(
         f'<li data-tags="{escape(" ".join(tags(c)))}"><a href="https://www.youtube.com/channel/{escape(c["id"])}">{escape(c["name"])}</a>'

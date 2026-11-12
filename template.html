@@ -30,13 +30,16 @@ h1 {{ font-size: 2rem; margin: 0; letter-spacing: .02em; color: var(--accent); }
 ul {{ list-style: none; padding: 0; margin: 0; }}
 .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px 16px; }}
 [data-view="shorts"] {{ grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }}
+body:has(#unwatched[aria-pressed="true"]) .video:has(.watched:checked) {{ display: none; }}
 .thumb {{ display: block; width: 100%; aspect-ratio: 16/9; padding: 0; border: 0; margin-bottom: 8px; background: var(--line); cursor: pointer; }}
 [data-view="shorts"] .thumb {{ aspect-ratio: 9/16; }}
 .thumb img {{ width: 100%; height: 100%; display: block; object-fit: cover; }}
+.video:has(.watched:checked) .thumb img {{ opacity: .35; }}
 .title {{ display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; color: var(--fg); font-weight: 600; line-height: 1.4; text-decoration: none; }}
 .title:hover {{ text-decoration: underline; }}
 .sub {{ margin: 4px 0 0; font-size: .875rem; color: var(--muted); }}
 .sub a {{ color: inherit; }}
+.seen {{ display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; font-size: .8rem; color: var(--muted); cursor: pointer; }}
 .channels li {{ padding: 10px 0; border-bottom: 1px solid var(--line); }}
 .channels a {{ color: var(--fg); font-weight: 600; margin-right: 8px; }}
 .channels p {{ margin: 2px 0 0; font-size: .875rem; color: var(--muted); }}
@@ -58,7 +61,7 @@ footer {{ margin-top: 40px; font-size: .8rem; color: var(--muted); }}
 <p class="lead">日本の手話で発信している YouTube チャンネルの新着まとめ（{count} チャンネル）</p>
 <div class="bar">
 <nav class="views" aria-label="表示の切替"><a href="#videos">動画</a><a href="#shorts">ショート</a><a href="#channels">チャンネル</a></nav>
-<div class="filters" role="group" aria-label="絞り込み">{buttons}</div>
+<div class="filters" role="group" aria-label="絞り込み"><button class="filter" id="unwatched" aria-pressed="false">未視聴のみ</button>{buttons}</div>
 </div>
 <ul data-view="videos" class="grid">{videos}</ul>
 <ul data-view="shorts" class="grid" hidden>{shorts}</ul>
@@ -80,6 +83,7 @@ const chosen = new Set();
 document.querySelectorAll(".filter").forEach(b => b.addEventListener("click", () => {{
   const on = b.getAttribute("aria-pressed") !== "true";
   b.setAttribute("aria-pressed", on);
+  if (b.id) return;
   on ? chosen.add(b.textContent) : chosen.delete(b.textContent);
   document.querySelectorAll("[data-tags]").forEach(li => {{
     const t = li.dataset.tags.split(" ");
@@ -87,12 +91,27 @@ document.querySelectorAll(".filter").forEach(b => b.addEventListener("click", ()
   }});
 }}));
 
+let seen = new Set();
+try {{ seen = new Set(JSON.parse(localStorage.getItem("watched"))); }} catch {{}}
+document.querySelectorAll(".watched").forEach(c => c.checked = seen.has(c.value));
+const mark = c => {{
+  c.checked ? seen.add(c.value) : seen.delete(c.value);
+  try {{ localStorage.setItem("watched", JSON.stringify([...seen])); }} catch {{}}
+}};
+document.addEventListener("change", e => e.target.matches(".watched") && mark(e.target));
+
 const dialog = document.getElementById("player"), frame = document.getElementById("frame");
+let api;
+const loadApi = () => api ??= new Promise(ready => {{
+  window.onYouTubeIframeAPIReady = ready;
+  document.head.append(Object.assign(document.createElement("script"), {{ src: "https://www.youtube.com/iframe_api" }}));
+}});
 document.addEventListener("click", e => {{
   const b = e.target.closest(".thumb");
   if (!b) return;
+  const box = b.parentElement.querySelector(".watched");
   const iframe = Object.assign(document.createElement("iframe"), {{
-    src: `https://www.youtube-nocookie.com/embed/${{encodeURIComponent(b.dataset.id)}}?autoplay=1`,
+    src: `https://www.youtube-nocookie.com/embed/${{encodeURIComponent(b.dataset.id)}}?autoplay=1&enablejsapi=1&origin=${{encodeURIComponent(location.origin)}}`,
     allow: "autoplay; encrypted-media; picture-in-picture",
     allowFullscreen: true,
     title: b.getAttribute("aria-label"),
@@ -100,6 +119,9 @@ document.addEventListener("click", e => {{
   dialog.classList.toggle("short", !!b.closest('[data-view="shorts"]'));
   frame.replaceChildren(iframe);
   dialog.showModal();
+  loadApi().then(() => iframe.isConnected && new YT.Player(iframe, {{
+    events: {{ onStateChange: s => {{ if (s.data === YT.PlayerState.ENDED) {{ box.checked = true; mark(box); }} }} }},
+  }}));
 }});
 dialog.addEventListener("click", e => e.target === dialog && dialog.close());
 dialog.addEventListener("close", () => frame.replaceChildren());

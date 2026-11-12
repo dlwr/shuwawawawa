@@ -201,6 +201,9 @@ class RenderTest(unittest.TestCase):
     def test_links_short_to_youtube_shorts(self):
         self.assertIn("https://www.youtube.com/shorts/sss", self.html())
 
+    def test_video_has_watched_checkbox(self):
+        self.assertIn('<input type="checkbox" class="watched" value="aaa"', self.html())
+
     def test_channel_carries_tags_for_filtering(self):
         self.assertIn('data-tags="学習 日本手話 ろう者"', self.list_of("channels"))
 
