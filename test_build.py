@@ -1,4 +1,5 @@
 import io
+import json
 import unittest
 
 import build
@@ -106,6 +107,57 @@ class CollectTest(unittest.TestCase):
             raise OSError("down")
 
         self.assertEqual(build.collect([{"id": "UC1"}], fetch, tolerate_outage=True), [])
+
+    def fetch_only_uc1(self, cid):
+        if cid != "UC1":
+            raise OSError("404")
+        return [video("new", "2026-11-02", cid)]
+
+    def test_carries_over_previous_videos_of_failed_channel(self):
+        previous = [video("kept", "2026-10-01", "UC2")]
+        result = build.collect([{"id": "UC1"}, {"id": "UC2"}], self.fetch_only_uc1, previous)
+        self.assertEqual([v["id"] for v in result], ["new", "kept"])
+
+    def test_ignores_previous_videos_of_fetched_channel(self):
+        previous = [video("old", "2026-10-01", "UC1")]
+        result = build.collect([{"id": "UC1"}, {"id": "UC2"}], self.fetch_only_uc1, previous)
+        self.assertEqual([v["id"] for v in result], ["new"])
+
+    def test_drops_previous_videos_of_removed_channel(self):
+        previous = [video("gone", "2026-10-01", "UC9")]
+        result = build.collect([{"id": "UC1"}, {"id": "UC2"}], self.fetch_only_uc1, previous)
+        self.assertEqual([v["id"] for v in result], ["new"])
+
+    def test_raises_when_every_fetch_fails_even_with_previous(self):
+        def fetch(cid):
+            raise OSError("down")
+
+        with self.assertRaises(RuntimeError):
+            build.collect([{"id": "UC1"}], fetch, [video("kept", "2026-10-01")])
+
+    def test_carries_over_every_channel_when_outage_is_tolerated(self):
+        def fetch(cid):
+            raise OSError("down")
+
+        result = build.collect([{"id": "UC1"}], fetch, [video("kept", "2026-10-01")], tolerate_outage=True)
+        self.assertEqual([v["id"] for v in result], ["kept"])
+
+
+class FetchPreviousTest(unittest.TestCase):
+    def test_reads_published_videos(self):
+        videos = [video("a", "2026-11-01")]
+        urlopen = lambda url, timeout: io.BytesIO(json.dumps(videos).encode())
+        self.assertEqual(build.fetch_previous(urlopen), videos)
+
+    def test_returns_nothing_when_unavailable(self):
+        def urlopen(url, timeout):
+            raise OSError("HTTP Error 404: Not Found")
+
+        self.assertEqual(build.fetch_previous(urlopen), [])
+
+    def test_returns_nothing_when_not_json(self):
+        urlopen = lambda url, timeout: io.BytesIO(b"<html>")
+        self.assertEqual(build.fetch_previous(urlopen), [])
 
 
 class RenderTest(unittest.TestCase):
