@@ -25,6 +25,7 @@ def parse_feed(xml):
             "title": e.findtext("a:title", namespaces=NS),
             "published": e.findtext("a:published", namespaces=NS),
             "channel_id": e.findtext("yt:channelId", namespaces=NS),
+            "short": any("/shorts/" in link.get("href", "") for link in e.findall("a:link", NS)),
         }
         for e in root.findall("a:entry", NS)
     ]

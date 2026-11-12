@@ -11,12 +11,14 @@ FEED = """<?xml version="1.0" encoding="UTF-8"?>
   <yt:videoId>aaa</yt:videoId>
   <yt:channelId>UC1</yt:channelId>
   <title>手話で&lt;自己紹介&gt;</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=aaa"/>
   <published>2026-11-01T00:00:00+00:00</published>
  </entry>
  <entry>
   <yt:videoId>bbb</yt:videoId>
   <yt:channelId>UC1</yt:channelId>
   <title>二本目</title>
+  <link rel="alternate" href="https://www.youtube.com/shorts/bbb"/>
   <published>2026-10-01T00:00:00+00:00</published>
  </entry>
 </feed>"""
@@ -38,6 +40,12 @@ class ParseFeedTest(unittest.TestCase):
 
     def test_reads_channel_id(self):
         self.assertEqual(build.parse_feed(FEED)[0]["channel_id"], "UC1")
+
+    def test_video_linked_as_shorts_is_short(self):
+        self.assertTrue(build.parse_feed(FEED)[1]["short"])
+
+    def test_video_linked_as_watch_is_not_short(self):
+        self.assertFalse(build.parse_feed(FEED)[0]["short"])
 
 
 class FetchFeedTest(unittest.TestCase):
