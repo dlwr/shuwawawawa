@@ -3,44 +3,54 @@ import os
 import sys
 import time
 import tomllib
+import urllib.error
 import urllib.request
-import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from html import escape
 from pathlib import Path
 
-NS = {"a": "http://www.w3.org/2005/Atom", "yt": "http://www.youtube.com/xml/schemas/2015"}
-FEED_URL = "https://www.youtube.com/feeds/videos.xml?channel_id={}"
+API_URL = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=50&playlistId={}"
 PREVIOUS_URL = "https://shuwa.yuta25.com/videos.json"
 JST = timezone(timedelta(hours=9))
 PER_CHANNEL = 5
 ATTEMPTS = 4
 
 
-def parse_feed(xml):
-    root = ET.fromstring(xml)
+def parse_items(body, channel_id):
     return [
         {
-            "id": e.findtext("yt:videoId", namespaces=NS),
-            "title": e.findtext("a:title", namespaces=NS),
-            "published": e.findtext("a:published", namespaces=NS),
-            "channel_id": e.findtext("yt:channelId", namespaces=NS),
-            "short": any("/shorts/" in link.get("href", "") for link in e.findall("a:link", NS)),
+            "id": i["contentDetails"]["videoId"],
+            "title": i["snippet"]["title"],
+            "published": i["contentDetails"]["videoPublishedAt"],
+            "channel_id": channel_id,
         }
-        for e in root.findall("a:entry", NS)
+        for i in body["items"]
+        if "videoPublishedAt" in i["contentDetails"]
     ]
 
 
-def fetch_feed(channel_id, urlopen=urllib.request.urlopen, sleep=time.sleep):
-    req = urllib.request.Request(FEED_URL.format(channel_id), headers={"User-Agent": "shuwawawawa-feed"})
+def fetch_playlist(playlist_id, key, urlopen, sleep):
+    req = urllib.request.Request(API_URL.format(playlist_id), headers={"X-Goog-Api-Key": key})
     for left in reversed(range(ATTEMPTS)):
         try:
             with urlopen(req, timeout=20) as res:
-                return parse_feed(res.read())
-        except OSError:
-            if not left:
+                return json.load(res)
+        except OSError as e:
+            if not left or getattr(e, "code", 500) < 500:
                 raise
             sleep(1)
+
+
+def fetch_channel(channel_id, key, urlopen=urllib.request.urlopen, sleep=time.sleep):
+    # UU + チャンネル ID の UC 以降 = 全アップロード、UUSH + 同 = ショートのみ。ショートが無いチャンネルは UUSH が 404 になる
+    uploads = parse_items(fetch_playlist("UU" + channel_id[2:], key, urlopen, sleep), channel_id)
+    try:
+        shorts = {v["id"] for v in parse_items(fetch_playlist("UUSH" + channel_id[2:], key, urlopen, sleep), channel_id)}
+    except urllib.error.HTTPError as e:
+        if e.code != 404:
+            raise
+        shorts = set()
+    return [{**v, "short": v["id"] in shorts} for v in uploads]
 
 
 def fetch_previous(urlopen=urllib.request.urlopen):
@@ -67,8 +77,8 @@ def collect(channels, fetch, previous=(), tolerate_outage=False):
             print(f"skip {ch['id']}: {e}", file=sys.stderr)
     if failures and (failures == len(channels) or not previous and failures * 2 > len(channels)):
         if not tolerate_outage:
-            raise RuntimeError(f"{failures} of {len(channels)} feeds failed")
-        print(f"::warning::{failures} of {len(channels)} feeds failed")
+            raise RuntimeError(f"{failures} of {len(channels)} channels failed")
+        print(f"::warning::{failures} of {len(channels)} channels failed")
     return sorted(videos, key=lambda v: v["published"], reverse=True)
 
 
@@ -124,7 +134,11 @@ TEMPLATE = (Path(__file__).parent / "template.html").read_text()
 
 def main():
     channels = tomllib.loads(Path("channels.toml").read_text())["channel"]
-    videos = collect(channels, fetch_feed, fetch_previous(), tolerate_outage=os.environ.get("GITHUB_EVENT_NAME") == "pull_request")
+    key = os.environ.get("YOUTUBE_API_KEY", "")
+    on_pr = os.environ.get("GITHUB_EVENT_NAME") == "pull_request"
+    if not key and not on_pr:
+        sys.exit("YOUTUBE_API_KEY is not set")
+    videos = collect(channels, lambda cid: fetch_channel(cid, key), fetch_previous(), tolerate_outage=on_pr)
     out = Path("dist")
     out.mkdir(exist_ok=True)
     (out / "index.html").write_text(render(channels, videos))
