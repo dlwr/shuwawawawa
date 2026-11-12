@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 import time
@@ -10,6 +11,7 @@ from pathlib import Path
 
 NS = {"a": "http://www.w3.org/2005/Atom", "yt": "http://www.youtube.com/xml/schemas/2015"}
 FEED_URL = "https://www.youtube.com/feeds/videos.xml?channel_id={}"
+PREVIOUS_URL = "https://shuwa.yuta25.com/videos.json"
 JST = timezone(timedelta(hours=9))
 PER_CHANNEL = 5
 ATTEMPTS = 4
@@ -38,6 +40,14 @@ def fetch_feed(channel_id, urlopen=urllib.request.urlopen, sleep=time.sleep):
             if not left:
                 raise
             sleep(1)
+
+
+def fetch_previous(urlopen=urllib.request.urlopen):
+    try:
+        with urlopen(PREVIOUS_URL, timeout=20) as res:
+            return json.load(res)
+    except (OSError, ValueError):
+        return []
 
 
 def collect(channels, fetch, previous=(), tolerate_outage=False):
@@ -98,10 +108,11 @@ TEMPLATE = (Path(__file__).parent / "template.html").read_text()
 
 def main():
     channels = tomllib.loads(Path("channels.toml").read_text())["channel"]
-    videos = collect(channels, fetch_feed, tolerate_outage=os.environ.get("GITHUB_EVENT_NAME") == "pull_request")
+    videos = collect(channels, fetch_feed, fetch_previous(), tolerate_outage=os.environ.get("GITHUB_EVENT_NAME") == "pull_request")
     out = Path("dist")
     out.mkdir(exist_ok=True)
     (out / "index.html").write_text(render(channels, videos))
+    (out / "videos.json").write_text(json.dumps(videos, ensure_ascii=False))
     print(f"{len(videos)} videos from {len(channels)} channels")
 
 

@@ -1,4 +1,5 @@
 import io
+import json
 import unittest
 
 import build
@@ -140,6 +141,23 @@ class CollectTest(unittest.TestCase):
 
         result = build.collect([{"id": "UC1"}], fetch, [video("kept", "2026-10-01")], tolerate_outage=True)
         self.assertEqual([v["id"] for v in result], ["kept"])
+
+
+class FetchPreviousTest(unittest.TestCase):
+    def test_reads_published_videos(self):
+        videos = [video("a", "2026-11-01")]
+        urlopen = lambda url, timeout: io.BytesIO(json.dumps(videos).encode())
+        self.assertEqual(build.fetch_previous(urlopen), videos)
+
+    def test_returns_nothing_when_unavailable(self):
+        def urlopen(url, timeout):
+            raise OSError("HTTP Error 404: Not Found")
+
+        self.assertEqual(build.fetch_previous(urlopen), [])
+
+    def test_returns_nothing_when_not_json(self):
+        urlopen = lambda url, timeout: io.BytesIO(b"<html>")
+        self.assertEqual(build.fetch_previous(urlopen), [])
 
 
 class RenderTest(unittest.TestCase):
