@@ -51,11 +51,16 @@ def fetch_previous(urlopen=urllib.request.urlopen):
         return []
 
 
+def latest(videos):
+    newest = sorted(videos, key=lambda v: v["published"], reverse=True)
+    return [v for short in (False, True) for v in [v for v in newest if bool(v.get("short")) is short][:PER_CHANNEL]]
+
+
 def collect(channels, fetch, previous=(), tolerate_outage=False):
     videos, failures = [], 0
     for ch in channels:
         try:
-            videos += sorted(fetch(ch["id"]), key=lambda v: v["published"], reverse=True)[:PER_CHANNEL]
+            videos += latest(fetch(ch["id"]))
         except Exception as e:
             failures += 1
             videos += [v for v in previous if v["channel_id"] == ch["id"]]

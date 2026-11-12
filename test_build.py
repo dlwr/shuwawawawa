@@ -94,6 +94,12 @@ class CollectTest(unittest.TestCase):
         result = build.collect([{"id": "UC1"}], lambda cid: feed)
         self.assertEqual([v["id"] for v in result], ["v0", "v1", "v2", "v3", "v4"])
 
+    def test_keeps_latest_shorts_apart_from_latest_videos(self):
+        feed = [{**video(f"s{i}", f"2026-11-{20 - i:02d}"), "short": True} for i in range(7)]
+        feed += [video(f"v{i}", f"2026-10-{20 - i:02d}") for i in range(7)]
+        result = build.collect([{"id": "UC1"}], lambda cid: feed)
+        self.assertEqual([v["id"] for v in result], [f"s{i}" for i in range(5)] + [f"v{i}" for i in range(5)])
+
     def test_skips_channel_whose_fetch_fails(self):
         def fetch(cid):
             if cid == "UC2":
