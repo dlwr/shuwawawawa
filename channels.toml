@@ -421,3 +421,19 @@ content = ["Vlog", "語り"]
 sign = "日本手話"
 signer = "ろう者"
 note = "北海道のジョー・ヒゲさん。旅・ろう者の歴史・グルメ"
+
+[[channel]]
+id = "UCq8U_cCwxL0GzK32FU-4zbQ"
+name = "齋藤陽道"
+content = ["語り", "ニュース"]
+sign = ""
+signer = ""
+note = "写真家・齋藤陽道さんの手話動画。「働くろう者をたずねて」シリーズなど"
+
+[[channel]]
+id = "UCsmM6xsJlLOeLDaf3YfbfCg"
+name = "Sign Lab.〜手話の世界の歩き方〜"
+content = ["学習", "Vlog"]
+sign = ""
+signer = ""
+note = "「一日一手話」など、手話の魅力を短い動画で楽しく学べる"
