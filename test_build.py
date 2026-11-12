@@ -107,6 +107,40 @@ class CollectTest(unittest.TestCase):
 
         self.assertEqual(build.collect([{"id": "UC1"}], fetch, tolerate_outage=True), [])
 
+    def fetch_only_uc1(self, cid):
+        if cid != "UC1":
+            raise OSError("404")
+        return [video("new", "2026-11-02", cid)]
+
+    def test_carries_over_previous_videos_of_failed_channel(self):
+        previous = [video("kept", "2026-10-01", "UC2")]
+        result = build.collect([{"id": "UC1"}, {"id": "UC2"}], self.fetch_only_uc1, previous)
+        self.assertEqual([v["id"] for v in result], ["new", "kept"])
+
+    def test_ignores_previous_videos_of_fetched_channel(self):
+        previous = [video("old", "2026-10-01", "UC1")]
+        result = build.collect([{"id": "UC1"}, {"id": "UC2"}], self.fetch_only_uc1, previous)
+        self.assertEqual([v["id"] for v in result], ["new"])
+
+    def test_drops_previous_videos_of_removed_channel(self):
+        previous = [video("gone", "2026-10-01", "UC9")]
+        result = build.collect([{"id": "UC1"}, {"id": "UC2"}], self.fetch_only_uc1, previous)
+        self.assertEqual([v["id"] for v in result], ["new"])
+
+    def test_raises_when_every_fetch_fails_even_with_previous(self):
+        def fetch(cid):
+            raise OSError("down")
+
+        with self.assertRaises(RuntimeError):
+            build.collect([{"id": "UC1"}], fetch, [video("kept", "2026-10-01")])
+
+    def test_carries_over_every_channel_when_outage_is_tolerated(self):
+        def fetch(cid):
+            raise OSError("down")
+
+        result = build.collect([{"id": "UC1"}], fetch, [video("kept", "2026-10-01")], tolerate_outage=True)
+        self.assertEqual([v["id"] for v in result], ["kept"])
+
 
 class RenderTest(unittest.TestCase):
     channels = [{"id": "UC1", "name": "テストch", "content": ["学習"], "sign": "日本手話", "signer": "ろう者", "note": "<b>"}]

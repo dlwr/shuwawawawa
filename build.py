@@ -40,13 +40,14 @@ def fetch_feed(channel_id, urlopen=urllib.request.urlopen, sleep=time.sleep):
             sleep(1)
 
 
-def collect(channels, fetch, tolerate_outage=False):
+def collect(channels, fetch, previous=(), tolerate_outage=False):
     videos, failures = [], 0
     for ch in channels:
         try:
             videos += sorted(fetch(ch["id"]), key=lambda v: v["published"], reverse=True)[:PER_CHANNEL]
         except Exception as e:
             failures += 1
+            videos += [v for v in previous if v["channel_id"] == ch["id"]]
             print(f"skip {ch['id']}: {e}", file=sys.stderr)
     if channels and failures == len(channels):
         if not tolerate_outage:
