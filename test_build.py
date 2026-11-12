@@ -11,12 +11,14 @@ FEED = """<?xml version="1.0" encoding="UTF-8"?>
   <yt:videoId>aaa</yt:videoId>
   <yt:channelId>UC1</yt:channelId>
   <title>手話で&lt;自己紹介&gt;</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=aaa"/>
   <published>2026-11-01T00:00:00+00:00</published>
  </entry>
  <entry>
   <yt:videoId>bbb</yt:videoId>
   <yt:channelId>UC1</yt:channelId>
   <title>二本目</title>
+  <link rel="alternate" href="https://www.youtube.com/shorts/bbb"/>
   <published>2026-10-01T00:00:00+00:00</published>
  </entry>
 </feed>"""
@@ -38,6 +40,12 @@ class ParseFeedTest(unittest.TestCase):
 
     def test_reads_channel_id(self):
         self.assertEqual(build.parse_feed(FEED)[0]["channel_id"], "UC1")
+
+    def test_video_linked_as_shorts_is_short(self):
+        self.assertTrue(build.parse_feed(FEED)[1]["short"])
+
+    def test_video_linked_as_watch_is_not_short(self):
+        self.assertFalse(build.parse_feed(FEED)[0]["short"])
 
 
 class FetchFeedTest(unittest.TestCase):
@@ -85,6 +93,12 @@ class CollectTest(unittest.TestCase):
         feed = [video(f"v{i}", f"2026-10-{20 - i:02d}") for i in range(8)]
         result = build.collect([{"id": "UC1"}], lambda cid: feed)
         self.assertEqual([v["id"] for v in result], ["v0", "v1", "v2", "v3", "v4"])
+
+    def test_keeps_latest_shorts_apart_from_latest_videos(self):
+        feed = [{**video(f"s{i}", f"2026-11-{20 - i:02d}"), "short": True} for i in range(7)]
+        feed += [video(f"v{i}", f"2026-10-{20 - i:02d}") for i in range(7)]
+        result = build.collect([{"id": "UC1"}], lambda cid: feed)
+        self.assertEqual([v["id"] for v in result], [f"s{i}" for i in range(5)] + [f"v{i}" for i in range(5)])
 
     def test_skips_channel_whose_fetch_fails(self):
         def fetch(cid):
@@ -164,7 +178,34 @@ class RenderTest(unittest.TestCase):
     channels = [{"id": "UC1", "name": "テストch", "content": ["学習"], "sign": "日本手話", "signer": "ろう者", "note": "<b>"}]
 
     def html(self):
-        return build.render(self.channels, [{"id": "aaa", "title": "<script>", "published": "2026-11-01T00:00:00+00:00", "channel_id": "UC1"}])
+        return build.render(
+            self.channels,
+            [
+                {"id": "aaa", "title": "<script>", "published": "2026-11-01T00:00:00+00:00", "channel_id": "UC1"},
+                {"id": "sss", "title": "短い", "published": "2026-11-02T00:00:00+00:00", "channel_id": "UC1", "short": True},
+            ],
+        )
+
+    def list_of(self, name):
+        return self.html().split(f'<ul data-view="{name}"')[1].split("</ul>")[0]
+
+    def test_lists_short_under_shorts(self):
+        self.assertIn('data-id="sss"', self.list_of("shorts"))
+
+    def test_leaves_short_out_of_videos(self):
+        self.assertNotIn('data-id="sss"', self.list_of("videos"))
+
+    def test_lists_video_without_short_flag_under_videos(self):
+        self.assertIn('data-id="aaa"', self.list_of("videos"))
+
+    def test_links_short_to_youtube_shorts(self):
+        self.assertIn("https://www.youtube.com/shorts/sss", self.html())
+
+    def test_video_has_watched_checkbox(self):
+        self.assertIn('<input type="checkbox" class="watched" value="aaa"', self.html())
+
+    def test_channel_carries_tags_for_filtering(self):
+        self.assertIn('data-tags="学習 日本手話 ろう者"', self.list_of("channels"))
 
     def test_escapes_video_title(self):
         self.assertIn("&lt;script&gt;", self.html())
