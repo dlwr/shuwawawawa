@@ -1,3 +1,4 @@
+import contextlib
 import io
 import json
 import unittest
@@ -130,11 +131,20 @@ class CollectTest(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             build.collect([{"id": "UC1"}], fetch)
 
-    def test_returns_nothing_instead_of_raising_when_outage_is_tolerated(self):
+    def collect_through_outage(self, previous=()):
         def fetch(cid):
             raise OSError("down")
 
-        self.assertEqual(build.collect([{"id": "UC1"}], fetch, tolerate_outage=True), [])
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            videos = build.collect([{"id": "UC1"}], fetch, previous, tolerate_outage=True)
+        return videos, out.getvalue()
+
+    def test_returns_nothing_instead_of_raising_when_outage_is_tolerated(self):
+        self.assertEqual(self.collect_through_outage()[0], [])
+
+    def test_warns_when_outage_is_tolerated(self):
+        self.assertIn("::warning::", self.collect_through_outage()[1])
 
     def fetch_only_uc1(self, cid):
         if cid != "UC1":
@@ -164,10 +174,7 @@ class CollectTest(unittest.TestCase):
             build.collect([{"id": "UC1"}], fetch, [video("kept", "2026-10-01")])
 
     def test_carries_over_every_channel_when_outage_is_tolerated(self):
-        def fetch(cid):
-            raise OSError("down")
-
-        result = build.collect([{"id": "UC1"}], fetch, [video("kept", "2026-10-01")], tolerate_outage=True)
+        result, _ = self.collect_through_outage([video("kept", "2026-10-01")])
         self.assertEqual([v["id"] for v in result], ["kept"])
 
 
