@@ -2,81 +2,118 @@ import contextlib
 import io
 import json
 import unittest
+import urllib.error
+import urllib.parse
 
 import build
 
-FEED = """<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
- <title>テストch</title>
- <entry>
-  <yt:videoId>aaa</yt:videoId>
-  <yt:channelId>UC1</yt:channelId>
-  <title>手話で&lt;自己紹介&gt;</title>
-  <link rel="alternate" href="https://www.youtube.com/watch?v=aaa"/>
-  <published>2026-11-01T00:00:00+00:00</published>
- </entry>
- <entry>
-  <yt:videoId>bbb</yt:videoId>
-  <yt:channelId>UC1</yt:channelId>
-  <title>二本目</title>
-  <link rel="alternate" href="https://www.youtube.com/shorts/bbb"/>
-  <published>2026-10-01T00:00:00+00:00</published>
- </entry>
-</feed>"""
+
+def item(vid, published="2026-11-01T00:00:00Z", title="題"):
+    return {"snippet": {"title": title}, "contentDetails": {"videoId": vid, "videoPublishedAt": published}}
 
 
 def video(vid, published, channel_id="UC1"):
     return {"id": vid, "title": vid, "published": published, "channel_id": channel_id}
 
 
-class ParseFeedTest(unittest.TestCase):
-    def test_returns_every_entry(self):
-        self.assertEqual([v["id"] for v in build.parse_feed(FEED)], ["aaa", "bbb"])
+class ParseItemsTest(unittest.TestCase):
+    body = {"items": [item("aaa", "2026-11-01T00:00:00Z", "手話で<自己紹介>"), item("bbb", "2026-10-01T00:00:00Z")]}
+
+    def test_returns_every_item(self):
+        self.assertEqual([v["id"] for v in build.parse_items(self.body, "UC1")], ["aaa", "bbb"])
 
     def test_reads_title(self):
-        self.assertEqual(build.parse_feed(FEED)[0]["title"], "手話で<自己紹介>")
+        self.assertEqual(build.parse_items(self.body, "UC1")[0]["title"], "手話で<自己紹介>")
 
     def test_reads_published(self):
-        self.assertEqual(build.parse_feed(FEED)[0]["published"], "2026-11-01T00:00:00+00:00")
+        self.assertEqual(build.parse_items(self.body, "UC1")[0]["published"], "2026-11-01T00:00:00Z")
 
-    def test_reads_channel_id(self):
-        self.assertEqual(build.parse_feed(FEED)[0]["channel_id"], "UC1")
+    def test_sets_channel_id(self):
+        self.assertEqual(build.parse_items(self.body, "UC1")[0]["channel_id"], "UC1")
 
-    def test_video_linked_as_shorts_is_short(self):
-        self.assertTrue(build.parse_feed(FEED)[1]["short"])
-
-    def test_video_linked_as_watch_is_not_short(self):
-        self.assertFalse(build.parse_feed(FEED)[0]["short"])
+    def test_skips_item_without_publish_date(self):
+        private = {"snippet": {"title": "Private video"}, "contentDetails": {"videoId": "zzz"}}
+        self.assertEqual(build.parse_items({"items": [private, item("aaa")]}, "UC1"), build.parse_items({"items": [item("aaa")]}, "UC1"))
 
 
-class FetchFeedTest(unittest.TestCase):
-    def urlopen(self, failures):
+def http_error(code):
+    return urllib.error.HTTPError("https://example.test", code, "error", {}, None)
+
+
+class FetchChannelTest(unittest.TestCase):
+    """playlists は「プレイリスト ID → 応答の列」。応答は動画の配列か例外で、最後の応答は繰り返される。"""
+
+    def urlopen(self, playlists):
         calls = []
 
         def urlopen(req, timeout):
             calls.append(req)
-            if len(calls) <= failures:
-                raise OSError("HTTP Error 404: Not Found")
-            return io.BytesIO(FEED.encode())
+            answers = playlists[urllib.parse.parse_qs(urllib.parse.urlsplit(req.full_url).query)["playlistId"][0]]
+            answer = answers.pop(0) if len(answers) > 1 else answers[0]
+            if isinstance(answer, Exception):
+                raise answer
+            return io.BytesIO(json.dumps({"items": answer}).encode())
 
         return urlopen, calls
 
-    def test_retries_until_feed_is_served(self):
-        urlopen, _ = self.urlopen(failures=2)
-        videos = build.fetch_feed("UC1", urlopen=urlopen, sleep=lambda s: None)
+    def fetch(self, playlists, sleep=lambda s: None):
+        urlopen, calls = self.urlopen(playlists)
+        return build.fetch_channel("UCabc", "KEY", urlopen=urlopen, sleep=sleep), calls
+
+    def test_reads_uploads_playlist_of_channel(self):
+        videos, _ = self.fetch({"UUabc": [[item("aaa"), item("bbb")]], "UUSHabc": [[]]})
         self.assertEqual([v["id"] for v in videos], ["aaa", "bbb"])
 
+    def test_video_in_shorts_playlist_is_short(self):
+        videos, _ = self.fetch({"UUabc": [[item("aaa"), item("bbb")]], "UUSHabc": [[item("bbb")]]})
+        self.assertTrue(videos[1]["short"])
+
+    def test_video_outside_shorts_playlist_is_not_short(self):
+        videos, _ = self.fetch({"UUabc": [[item("aaa"), item("bbb")]], "UUSHabc": [[item("bbb")]]})
+        self.assertFalse(videos[0]["short"])
+
+    def test_channel_without_shorts_playlist_has_no_shorts(self):
+        videos, _ = self.fetch({"UUabc": [[item("aaa")]], "UUSHabc": [http_error(404)]})
+        self.assertEqual([v["short"] for v in videos], [False])
+
+    def test_does_not_retry_missing_shorts_playlist(self):
+        _, calls = self.fetch({"UUabc": [[item("aaa")]], "UUSHabc": [http_error(404)]})
+        self.assertEqual(len(calls), 2)
+
+    def test_raises_when_uploads_playlist_is_missing(self):
+        with self.assertRaises(urllib.error.HTTPError):
+            self.fetch({"UUabc": [http_error(404)], "UUSHabc": [[]]})
+
+    def test_raises_when_shorts_playlist_is_refused(self):
+        with self.assertRaises(urllib.error.HTTPError):
+            self.fetch({"UUabc": [[item("aaa")]], "UUSHabc": [http_error(403)]})
+
+    def test_sends_key_in_header(self):
+        _, calls = self.fetch({"UUabc": [[item("aaa")]], "UUSHabc": [[]]})
+        self.assertEqual(calls[0].get_header("X-goog-api-key"), "KEY")
+
+    def test_keeps_key_out_of_url(self):
+        _, calls = self.fetch({"UUabc": [[item("aaa")]], "UUSHabc": [[]]})
+        self.assertNotIn("KEY", calls[0].full_url)
+
+    def test_retries_server_error(self):
+        videos, _ = self.fetch({"UUabc": [http_error(500), [item("aaa")]], "UUSHabc": [[]]})
+        self.assertEqual([v["id"] for v in videos], ["aaa"])
+
+    def test_retries_network_error(self):
+        videos, _ = self.fetch({"UUabc": [OSError("timed out"), [item("aaa")]], "UUSHabc": [[]]})
+        self.assertEqual([v["id"] for v in videos], ["aaa"])
+
     def test_gives_up_after_max_attempts(self):
-        urlopen, calls = self.urlopen(failures=99)
-        with self.assertRaises(OSError):
-            build.fetch_feed("UC1", urlopen=urlopen, sleep=lambda s: None)
+        urlopen, calls = self.urlopen({"UUabc": [http_error(500)]})
+        with self.assertRaises(urllib.error.HTTPError):
+            build.fetch_channel("UCabc", "KEY", urlopen=urlopen, sleep=lambda s: None)
         self.assertEqual(len(calls), build.ATTEMPTS)
 
     def test_waits_between_attempts_only(self):
-        urlopen, _ = self.urlopen(failures=99)
         waits = []
-        with self.assertRaises(OSError):
-            build.fetch_feed("UC1", urlopen=urlopen, sleep=waits.append)
+        with self.assertRaises(urllib.error.HTTPError):
+            self.fetch({"UUabc": [http_error(500)]}, sleep=waits.append)
         self.assertEqual(len(waits), build.ATTEMPTS - 1)
 
 
