@@ -95,6 +95,20 @@ class CollectTest(unittest.TestCase):
         result = build.collect([{"id": "UC1"}, {"id": "UC2"}], fetch)
         self.assertEqual([v["id"] for v in result], ["ok"])
 
+    def fetch_only_uc3(self, cid):
+        if cid != "UC3":
+            raise OSError("404")
+        return [video("new", "2026-11-02", cid)]
+
+    def test_raises_when_most_fetches_fail_and_nothing_to_carry_over(self):
+        with self.assertRaises(RuntimeError):
+            build.collect([{"id": "UC1"}, {"id": "UC2"}, {"id": "UC3"}], self.fetch_only_uc3)
+
+    def test_keeps_going_when_most_fetches_fail_but_previous_exists(self):
+        previous = [video("kept", "2026-10-01", "UC1")]
+        result = build.collect([{"id": "UC1"}, {"id": "UC2"}, {"id": "UC3"}], self.fetch_only_uc3, previous)
+        self.assertEqual([v["id"] for v in result], ["new", "kept"])
+
     def test_raises_when_every_fetch_fails(self):
         def fetch(cid):
             raise OSError("down")
