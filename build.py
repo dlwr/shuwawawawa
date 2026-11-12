@@ -94,14 +94,20 @@ def tag_spans(ch):
     return "".join(f'<span class="tag">{escape(t)}</span>' for t in tags(ch) if t)
 
 
-def render(channels, videos):
+def new_count(n):
+    return f'<small class="new">新着 {n}</small>' if n else ""
+
+
+def render(channels, videos, now=None):
+    now = now or datetime.now(JST)
     by_id = {c["id"]: c for c in channels}
     filters = sorted({t for c in channels for t in [*c.get("content", []), c.get("sign", "")] if t})
-    rows = {False: [], True: []}
+    rows, new = {False: [], True: []}, {False: 0, True: 0}
     for v in videos:
         ch = by_id.get(v["channel_id"], {"name": "", "id": v["channel_id"]})
         vid = escape(v["id"])
         short = bool(v.get("short"))
+        new[short] += now - datetime.fromisoformat(v["published"]) < timedelta(days=1)
         # 縦長の正式サムネイル oar2.jpg は無い動画があるので、必ずある冒頭フレームを使う
         rows[short].append(
             f'<li class="video" data-tags="{escape(" ".join(tags(ch)))}">'
@@ -118,11 +124,13 @@ def render(channels, videos):
         for c in sorted(channels, key=lambda c: c["name"])
     )
     buttons = "".join(f'<button class="filter" aria-pressed="false">{escape(t)}</button>' for t in filters)
-    updated = datetime.now(JST).strftime("%Y-%m-%d %H:%M")
+    updated = now.astimezone(JST).strftime("%Y-%m-%d %H:%M")
     return TEMPLATE.format(
         buttons=buttons,
         videos="".join(rows[False]),
         shorts="".join(rows[True]),
+        new_videos=new_count(new[False]),
+        new_shorts=new_count(new[True]),
         channels=chan_rows,
         count=len(channels),
         updated=updated,

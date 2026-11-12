@@ -23,6 +23,7 @@ h1 {{ font-size: 2rem; margin: 0; letter-spacing: .02em; color: var(--accent); }
 .bar {{ position: sticky; top: 0; z-index: 1; background: var(--bg); padding: 8px 0 10px; margin-bottom: 20px; border-bottom: 1px solid var(--line); }}
 .views {{ display: flex; gap: 20px; margin-bottom: 10px; }}
 .views a {{ color: var(--muted); font-weight: 600; text-decoration: none; padding: 2px 0; border-bottom: 2px solid transparent; }}
+.new {{ margin-left: 6px; font-size: .75rem; font-weight: 400; color: var(--accent); }}
 .views a[aria-current] {{ color: var(--fg); border-color: var(--accent); }}
 .filters {{ display: flex; gap: 6px; overflow-x: auto; }}
 .filter {{ flex: none; font: inherit; font-size: .9rem; padding: 4px 10px; border: 1px solid var(--line); border-radius: 4px; background: transparent; color: var(--fg); cursor: pointer; }}
@@ -60,7 +61,7 @@ footer {{ margin-top: 40px; font-size: .8rem; color: var(--muted); }}
 <h1>シュワワワワ</h1>
 <p class="lead">日本の手話で発信している YouTube チャンネルの新着まとめ（{count} チャンネル）</p>
 <div class="bar">
-<nav class="views" aria-label="表示の切替"><a href="#videos">動画</a><a href="#shorts">ショート</a><a href="#channels">チャンネル</a></nav>
+<nav class="views" aria-label="表示の切替"><a href="#videos">動画{new_videos}</a><a href="#shorts">ショート{new_shorts}</a><a href="#channels">チャンネル</a></nav>
 <div class="filters" role="group" aria-label="絞り込み"><button class="filter" id="unwatched" aria-pressed="false">未視聴のみ</button>{buttons}</div>
 </div>
 <ul data-view="videos" class="grid">{videos}</ul>

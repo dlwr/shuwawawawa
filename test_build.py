@@ -4,6 +4,7 @@ import json
 import unittest
 import urllib.error
 import urllib.parse
+from datetime import datetime, timezone
 
 import build
 
@@ -243,6 +244,22 @@ class RenderTest(unittest.TestCase):
                 {"id": "sss", "title": "短い", "published": "2026-11-02T00:00:00+00:00", "channel_id": "UC1", "short": True},
             ],
         )
+
+    def html_at(self, now):
+        videos = [
+            {"id": "aaa", "title": "古い動画", "published": "2026-11-01T00:00:00Z", "channel_id": "UC1", "short": False},
+            {"id": "sss", "title": "新しいショート", "published": "2026-11-02T00:00:00Z", "channel_id": "UC1", "short": True},
+            {"id": "ttt", "title": "古いショート", "published": "2026-10-30T00:00:00Z", "channel_id": "UC1", "short": True},
+        ]
+        return build.render(self.channels, videos, now=now)
+
+    def test_tab_counts_videos_published_within_a_day(self):
+        html = self.html_at(datetime(2026, 11, 2, 12, tzinfo=timezone.utc))
+        self.assertIn('<a href="#shorts">ショート<small class="new">新着 1</small></a>', html)
+
+    def test_tab_has_no_count_when_nothing_is_new(self):
+        html = self.html_at(datetime(2026, 11, 2, 12, tzinfo=timezone.utc))
+        self.assertIn('<a href="#videos">動画</a>', html)
 
     def list_of(self, name):
         return self.html().split(f'<ul data-view="{name}"')[1].split("</ul>")[0]
