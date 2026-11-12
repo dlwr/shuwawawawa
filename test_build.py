@@ -1,3 +1,4 @@
+import io
 import unittest
 
 import build
@@ -36,6 +37,37 @@ class ParseFeedTest(unittest.TestCase):
 
     def test_reads_channel_id(self):
         self.assertEqual(build.parse_feed(FEED)[0]["channel_id"], "UC1")
+
+
+class FetchFeedTest(unittest.TestCase):
+    def urlopen(self, failures):
+        calls = []
+
+        def urlopen(req, timeout):
+            calls.append(req)
+            if len(calls) <= failures:
+                raise OSError("HTTP Error 404: Not Found")
+            return io.BytesIO(FEED.encode())
+
+        return urlopen, calls
+
+    def test_retries_until_feed_is_served(self):
+        urlopen, _ = self.urlopen(failures=2)
+        videos = build.fetch_feed("UC1", urlopen=urlopen, sleep=lambda s: None)
+        self.assertEqual([v["id"] for v in videos], ["aaa", "bbb"])
+
+    def test_gives_up_after_max_attempts(self):
+        urlopen, calls = self.urlopen(failures=99)
+        with self.assertRaises(OSError):
+            build.fetch_feed("UC1", urlopen=urlopen, sleep=lambda s: None)
+        self.assertEqual(len(calls), build.ATTEMPTS)
+
+    def test_waits_between_attempts_only(self):
+        urlopen, _ = self.urlopen(failures=99)
+        waits = []
+        with self.assertRaises(OSError):
+            build.fetch_feed("UC1", urlopen=urlopen, sleep=waits.append)
+        self.assertEqual(len(waits), build.ATTEMPTS - 1)
 
 
 class CollectTest(unittest.TestCase):

@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import tomllib
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -11,6 +12,7 @@ NS = {"a": "http://www.w3.org/2005/Atom", "yt": "http://www.youtube.com/xml/sche
 FEED_URL = "https://www.youtube.com/feeds/videos.xml?channel_id={}"
 JST = timezone(timedelta(hours=9))
 PER_CHANNEL = 5
+ATTEMPTS = 4
 
 
 def parse_feed(xml):
@@ -26,10 +28,16 @@ def parse_feed(xml):
     ]
 
 
-def fetch_feed(channel_id):
+def fetch_feed(channel_id, urlopen=urllib.request.urlopen, sleep=time.sleep):
     req = urllib.request.Request(FEED_URL.format(channel_id), headers={"User-Agent": "shuwawawawa-feed"})
-    with urllib.request.urlopen(req, timeout=20) as res:
-        return parse_feed(res.read())
+    for left in reversed(range(ATTEMPTS)):
+        try:
+            with urlopen(req, timeout=20) as res:
+                return parse_feed(res.read())
+        except OSError:
+            if not left:
+                raise
+            sleep(1)
 
 
 def collect(channels, fetch, tolerate_outage=False):
