@@ -1,3 +1,4 @@
+import os
 import sys
 import tomllib
 import urllib.request
@@ -31,7 +32,7 @@ def fetch_feed(channel_id):
         return parse_feed(res.read())
 
 
-def collect(channels, fetch):
+def collect(channels, fetch, tolerate_outage=False):
     videos, failures = [], 0
     for ch in channels:
         try:
@@ -40,7 +41,9 @@ def collect(channels, fetch):
             failures += 1
             print(f"skip {ch['id']}: {e}", file=sys.stderr)
     if channels and failures == len(channels):
-        raise RuntimeError("every feed failed")
+        if not tolerate_outage:
+            raise RuntimeError("every feed failed")
+        print("::warning::every feed failed")
     return sorted(videos, key=lambda v: v["published"], reverse=True)
 
 
@@ -86,7 +89,7 @@ TEMPLATE = (Path(__file__).parent / "template.html").read_text()
 
 def main():
     channels = tomllib.loads(Path("channels.toml").read_text())["channel"]
-    videos = collect(channels, fetch_feed)
+    videos = collect(channels, fetch_feed, tolerate_outage=os.environ.get("GITHUB_EVENT_NAME") == "pull_request")
     out = Path("dist")
     out.mkdir(exist_ok=True)
     (out / "index.html").write_text(render(channels, videos))
