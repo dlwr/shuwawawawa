@@ -25,6 +25,8 @@ jobs:
       - uses: jdx/mise-action@v5
       - run: python -m unittest
       - run: python build.py
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
