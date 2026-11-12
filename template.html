@@ -26,7 +26,7 @@ ul {{ list-style: none; padding: 0; margin: 0; }}
 .video {{ display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line); }}
 .video[hidden] {{ display: none; }}
 .thumb {{ flex: 0 0 200px; aspect-ratio: 16/9; padding: 0; border: 0; background: var(--line); cursor: pointer; }}
-.thumb img, .thumb iframe {{ width: 100%; height: 100%; display: block; border: 0; object-fit: cover; }}
+.thumb img {{ width: 100%; height: 100%; display: block; object-fit: cover; }}
 .video.playing {{ flex-direction: column; }}
 .video.playing .thumb {{ flex-basis: auto; width: 100%; }}
 .title {{ color: var(--fg); font-weight: 600; text-decoration: none; }}
@@ -64,10 +64,12 @@ document.querySelectorAll(".filter").forEach(b => b.addEventListener("click", ()
   }});
 }}));
 document.getElementById("videos").addEventListener("click", e => {{
-  const b = e.target.closest(".thumb");
-  if (!b || b.querySelector("iframe")) return;
-  b.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${{b.dataset.id}}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="動画"></iframe>`;
-  b.closest(".video").classList.add("playing");
+  const b = e.target.closest("button.thumb");
+  if (!b) return;
+  const li = b.closest(".video");
+  b.outerHTML = `<iframe class="thumb" src="https://www.youtube-nocookie.com/embed/${{b.dataset.id}}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="動画"></iframe>`;
+  li.classList.add("playing");
+  li.querySelector("iframe").focus();
 }});
 </script>
 </body>
