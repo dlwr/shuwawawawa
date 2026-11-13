@@ -437,3 +437,19 @@ content = ["学習", "Vlog"]
 sign = ""
 signer = ""
 note = "「一日一手話」など、手話の魅力を短い動画で楽しく学べる"
+
+[[channel]]
+id = "UC4rj7Ns8MtIqoI7i0Lagkng"
+name = "コーダ ゆりこ"
+content = ["学習", "語り"]
+sign = ""
+signer = "CODA"
+note = "ろう者の両親を持つ手話通訳士・森本友里子さん。手話表現や日本手話の練習を紹介"
+
+[[channel]]
+id = "UCl0k_Pzrv8moqV3RFKC-QTg"
+name = "石川県聴覚障害者センター〈スタジオ〉公式動画チャンネル"
+content = ["ニュース"]
+sign = ""
+signer = ""
+note = "石川県聴覚障害者協会・センターの手話つきのお知らせ、災害情報、映画祭など"
