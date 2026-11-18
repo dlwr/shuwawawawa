@@ -461,3 +461,11 @@ content = ["学習", "語り"]
 sign = ""
 signer = ""
 note = "手話学習者の視点で作る手話動画。1分手話や聞き取り通訳の学び方など"
+
+[[channel]]
+id = "UCc6nmkvuY5sDIDPTizv64LQ"
+name = "日本手話の部屋"
+content = ["語り", "学習"]
+sign = "日本手話"
+signer = ""
+note = "日本手話でいろいろ語る。世界の国々の手話シリーズなど"
