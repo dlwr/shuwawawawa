@@ -469,3 +469,11 @@ content = ["語り", "学習"]
 sign = "日本手話"
 signer = ""
 note = "日本手話でいろいろ語る。世界の国々の手話シリーズなど"
+
+[[channel]]
+id = "UCRbhxcgaT2Tq2ZcXdJG4yQg"
+name = "MIO"
+content = ["Vlog", "エンタメ"]
+sign = ""
+signer = "ろう者"
+note = "ろう者YouTuberのMIOさん。手話をしながらゲーム実況や購入品紹介など"
