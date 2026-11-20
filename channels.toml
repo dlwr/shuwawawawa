@@ -477,3 +477,11 @@ content = ["Vlog", "エンタメ"]
 sign = ""
 signer = "ろう者"
 note = "ろう者YouTuberのMIOさん。手話をしながらゲーム実況や購入品紹介など"
+
+[[channel]]
+id = "UCwlUyMkfsWmetOCaqRbfVlg"
+name = "ゆーけん～聴覚障害者の日常～"
+content = ["学習", "Vlog"]
+sign = ""
+signer = "聴覚障害者"
+note = "聴覚障害者のゆーけんさんによる手話学習動画。手話劇での読み取り練習、日常で使う手話表現など"
