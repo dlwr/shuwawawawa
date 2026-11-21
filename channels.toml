@@ -485,3 +485,19 @@ content = ["学習", "Vlog"]
 sign = ""
 signer = "聴覚障害者"
 note = "聴覚障害者のゆーけんさんによる手話学習動画。手話劇での読み取り練習、日常で使う手話表現など"
+
+[[channel]]
+id = "UCIoi4KcBvVv8xz4-QN5dJQw"
+name = "マノン"
+content = ["学習", "語り"]
+sign = "日本手話"
+signer = "ろう者"
+note = "ろうでLGBTのマノンさん。日本手話の読み取り練習や、海外の手話話者との交流など"
+
+[[channel]]
+id = "UC_CuDhJVixe8DJ39hx3oiqA"
+name = "手話文化村"
+content = ["語り", "学習"]
+sign = ""
+signer = ""
+note = "手話通訳やろう運動、ろう者から見た聴者などを手話で語る講演シリーズ"
