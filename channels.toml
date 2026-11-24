@@ -509,3 +509,19 @@ content = ["学習"]
 sign = ""
 signer = ""
 note = "手話単語を一つずつ紹介する手話辞典もどき。入門・指文字・自己紹介の再生リストあり"
+
+[[channel]]
+id = "UC9UB7bEeGR3GJe_RG4CK3ug"
+name = "Kagayaki Kk"
+content = ["ニュース"]
+sign = ""
+signer = ""
+note = "かがやきパソコンスクールによる手話ニュース（ろう者関連の話題を週次で配信）"
+
+[[channel]]
+id = "UCnCjjCgnuWBtnIRhFEI7QLA"
+name = "新潟県聴覚障害者情報センター"
+content = ["学習", "ニュース"]
+sign = ""
+signer = ""
+note = "手話単語の紹介や読み取りチャレンジ、ふれ愛NEWSなどを手話で配信する新潟のセンター"
