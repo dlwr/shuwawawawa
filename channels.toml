@@ -525,3 +525,19 @@ content = ["学習", "ニュース"]
 sign = ""
 signer = ""
 note = "手話単語の紹介や読み取りチャレンジ、ふれ愛NEWSなどを手話で配信する新潟のセンター"
+
+[[channel]]
+id = "UCtj2FiYRPvtG8sNfx5WIOoQ"
+name = "手話の森"
+content = ["Vlog", "語り"]
+sign = ""
+signer = "ろう者"
+note = "ろう三姉妹が手話やろう者の暮らしを雑談・質問コーナーなどで発信"
+
+[[channel]]
+id = "UCX0s7ZJ09dcGCeVMIYKuaag"
+name = "We are deaf."
+content = ["エンタメ"]
+sign = ""
+signer = ""
+note = "ろう・難聴の仲間が手話でゲームやチャレンジ企画、コラボ動画を配信"
