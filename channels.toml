@@ -541,3 +541,11 @@ content = ["エンタメ"]
 sign = ""
 signer = ""
 note = "ろう・難聴の仲間が手話でゲームやチャレンジ企画、コラボ動画を配信"
+
+[[channel]]
+id = "UCXSd9d0o9vP4CibITl811Bg"
+name = "OSAKAROUX 大阪聾X"
+content = ["エンタメ"]
+sign = ""
+signer = ""
+note = "大阪のろう者コミュニティが手話でイベント告知や企画・大食い対決などを発信"
