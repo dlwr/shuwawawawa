@@ -549,3 +549,27 @@ content = ["エンタメ"]
 sign = ""
 signer = ""
 note = "大阪のろう者コミュニティが手話でイベント告知や企画・大食い対決などを発信"
+
+[[channel]]
+id = "UCpcHiMgx1HAuIfivstJjF1Q"
+name = "綾ちゃんねる"
+content = ["語り", "Vlog"]
+sign = ""
+signer = "耳が聞こえない"
+note = "デフ姉妹ちゃんねるの母・綾香さん。手話で自分のことやろう者あるあるを語る"
+
+[[channel]]
+id = "UCXbl3OTziMz-Gn9k_bj9HUA"
+name = "作田麗奈"
+content = ["Vlog", "語り"]
+sign = ""
+signer = "耳が聞こえない"
+note = "美容・子育て・日常を手話で発信。音声なし"
+
+[[channel]]
+id = "UCFY3QZhqeOr8J67s6PxXgNg"
+name = "木村晴美"
+content = ["学習", "語り"]
+sign = ""
+signer = ""
+note = "木村晴美さんの個人チャンネル。手話の文法解説や対談"
