@@ -517,3 +517,67 @@ content = ["学習"]
 sign = ""
 signer = ""
 note = "NOK SIGN CLUB（ろう者講師の手話教室）の手話単語レッスン・読み取り練習"
+
+[[channel]]
+id = "UC9UB7bEeGR3GJe_RG4CK3ug"
+name = "Kagayaki Kk"
+content = ["ニュース"]
+sign = ""
+signer = ""
+note = "かがやきパソコンスクールによる手話ニュース（ろう者関連の話題を週次で配信）"
+
+[[channel]]
+id = "UCnCjjCgnuWBtnIRhFEI7QLA"
+name = "新潟県聴覚障害者情報センター"
+content = ["学習", "ニュース"]
+sign = ""
+signer = ""
+note = "手話単語の紹介や読み取りチャレンジ、ふれ愛NEWSなどを手話で配信する新潟のセンター"
+
+[[channel]]
+id = "UCtj2FiYRPvtG8sNfx5WIOoQ"
+name = "手話の森"
+content = ["Vlog", "語り"]
+sign = ""
+signer = "ろう者"
+note = "ろう三姉妹が手話やろう者の暮らしを雑談・質問コーナーなどで発信"
+
+[[channel]]
+id = "UCX0s7ZJ09dcGCeVMIYKuaag"
+name = "We are deaf."
+content = ["エンタメ"]
+sign = ""
+signer = ""
+note = "ろう・難聴の仲間が手話でゲームやチャレンジ企画、コラボ動画を配信"
+
+[[channel]]
+id = "UCXSd9d0o9vP4CibITl811Bg"
+name = "OSAKAROUX 大阪聾X"
+content = ["エンタメ"]
+sign = ""
+signer = ""
+note = "大阪のろう者コミュニティが手話でイベント告知や企画・大食い対決などを発信"
+
+[[channel]]
+id = "UCpcHiMgx1HAuIfivstJjF1Q"
+name = "綾ちゃんねる"
+content = ["語り", "Vlog"]
+sign = ""
+signer = "耳が聞こえない"
+note = "デフ姉妹ちゃんねるの母・綾香さん。手話で自分のことやろう者あるあるを語る"
+
+[[channel]]
+id = "UCXbl3OTziMz-Gn9k_bj9HUA"
+name = "作田麗奈"
+content = ["Vlog", "語り"]
+sign = ""
+signer = "耳が聞こえない"
+note = "美容・子育て・日常を手話で発信。音声なし"
+
+[[channel]]
+id = "UCFY3QZhqeOr8J67s6PxXgNg"
+name = "木村晴美"
+content = ["学習", "語り"]
+sign = ""
+signer = ""
+note = "木村晴美さんの個人チャンネル。手話の文法解説や対談"
