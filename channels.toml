@@ -509,3 +509,11 @@ content = ["学習"]
 sign = ""
 signer = ""
 note = "手話単語を一つずつ紹介する手話辞典もどき。入門・指文字・自己紹介の再生リストあり"
+
+[[channel]]
+id = "UCLt9VCmFtefw8pkVE-kzFcg"
+name = "デフチャンネル DEAF channel"
+content = ["学習"]
+sign = ""
+signer = ""
+note = "NOK SIGN CLUB（ろう者講師の手話教室）の手話単語レッスン・読み取り練習"
